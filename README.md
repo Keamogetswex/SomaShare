@@ -19,3 +19,17 @@ SET UP INSTRUCTIONS:
 7. Set Up architecture for UI AND ERROR HANDLING
 8. Africanisation features (Language toggle, Trust Score, Enable users to have 'Cash on Meetup' option)
 
+TECHNOLOGIES USED:
+1..NET 8 (ASP.NET Core)
+2.ASP.NET Core MVC
+3.C# 12
+4.Entity Framework Core 8 (Code‑First, Migrations)
+5.ASP.NET Core Identity (authentication, role-based authorization)
+6. Architecture layering
+7. Built-in ASP.NET Core DI
+
+ER DIAGRAM:
+<img width="650" height="323" alt="SomaShareSS3_ERD2" src="https://github.com/user-attachments/assets/e973ca90-3f70-40a1-8e3f-ea270547bca3" />
+<img width="646" height="405" alt="SomaShareSS3_ERD" src="https://github.com/user-attachments/assets/dbd7ae52-3961-4637-9fb7-5d833f9d2796" />
+
+
