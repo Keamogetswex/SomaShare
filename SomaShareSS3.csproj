@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Blazor\Components\Layout\MainLayout.razor" />
+    <Content Remove="Blazor\Components\Layout\NavMenu.razor" />
+    <Content Remove="Blazor\Components\Pages\Account\Login.razor" />
+    <Content Remove="Blazor\Components\Routes.razor" />
+    <Content Remove="Blazor\Components\Shared\TextbookCard.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Blazor\Components\Layout\MainLayout.razor" />
+    <Compile Include="Blazor\Components\Layout\NavMenu.razor" />
+    <Compile Include="Blazor\Components\Pages\Account\Login.razor" />
+    <Compile Include="Blazor\Components\Routes.razor" />
+    <Compile Include="Blazor\Components\Shared\TextbookCard.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

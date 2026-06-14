@@ -1,0 +1,112 @@
+
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #22c55e;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+}
+
+html, body {
+    height: 100%;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+}
+
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+ .card:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+ }
+
+
+.trust-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: #fef3c7;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+
+.footer {
+    margin-top: auto;
+}
+
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+
+.badge {
+    font-weight: 500;
+}
+
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+
+.hero-section .d-flex {
+    justify-content: center;
+        }
+}
+
+
+.modal.show {
+    display: block;
+}
+
+
+.alert-dismissible .btn-close {
+    padding: 1rem;
+}
+
+
+.table-hover tbody tr:hover {
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+
+.dropdown-menu {
+    min-width: 120px;
+}
