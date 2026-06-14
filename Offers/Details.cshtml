@@ -1,0 +1,60 @@
+@model SomaShareSS3.ViewModels.OfferEditViewModel
+
+@{
+    ViewData["Title"] = "Offer Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model != null)
+            {
+                <h1>Offer Details</h1>
+                <hr />
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Offer Amount:</strong> <span class="text-success">@Model.OfferAmount.ToString("C")</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Status:</strong>
+                            @if (Model.Status == SomaShareSS3.Models.Enums.OfferStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else if (Model.Status == SomaShareSS3.Models.Enums.OfferStatus.Accepted)
+                            {
+                                <span class="badge bg-success">Accepted</span>
+                            }
+                            else if (Model.Status == SomaShareSS3.Models.Enums.OfferStatus.Rejected)
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Withdrawn</span>
+                            }
+                        </p>
+                        @if (!string.IsNullOrEmpty(Model.Message))
+                        {
+                            <p class="card-text">
+                                <strong>Message:</strong> @Model.Message
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <a asp-action="My" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Offer not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>

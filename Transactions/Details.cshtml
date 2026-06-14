@@ -1,0 +1,74 @@
+@model SomaShareSS3.ViewModels.TransactionEditViewModel
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model != null)
+            {
+                <h1>Transaction Details</h1>
+                <hr />
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Amount:</strong> <span class="text-success">@Model.Amount.ToString("C")</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Payment Method:</strong> @Model.PaymentMethod
+                        </p>
+                        <p class="card-text">
+                            <strong>Status:</strong>
+                            @if (Model.Status == SomaShareSS3.Models.Enums.TransactionStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else if (Model.Status == SomaShareSS3.Models.Enums.TransactionStatus.InProgress)
+                            {
+                                <span class="badge bg-info">In Progress</span>
+                            }
+                            else if (Model.Status == SomaShareSS3.Models.Enums.TransactionStatus.Completed)
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                        </p>
+                        @if (!string.IsNullOrEmpty(Model.MeetupLocation))
+                        {
+                            <p class="card-text">
+                                <strong>Meetup Location:</strong> @Model.MeetupLocation
+                            </p>
+                        }
+                        @if (Model.MeetupDateTime.HasValue)
+                        {
+                            <p class="card-text">
+                                <strong>Meetup Date/Time:</strong> @Model.MeetupDateTime.Value.ToString("g")
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Transaction not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+@model SomaShareSS3.ViewModels.CategoryViewModel
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model != null)
+            {
+                <h1>@Model.Name</h1>
+                <hr />
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text">@Model.Description</p>
+                    </div>
+                </div>
+
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Category not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
