@@ -1,0 +1,66 @@
+@model List<SomaShareSS3.ViewModels.ReviewListItemViewModel>
+
+@{
+    ViewData["Title"] = "Reviews Given";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Reviews I've Given</h1>
+            <p class="text-muted">Reviews you have written for other users</p>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var review in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                @for (int i = 0; i < review.Rating; i++)
+                                {
+                                    <i class="fas fa-star text-warning"></i>
+                                }
+                                @for (int i = review.Rating; i < 5; i++)
+                                {
+                                    <i class="fas fa-star text-secondary"></i>
+                                }
+                            </div>
+                            <p class="card-text">@review.Comment</p>
+                            <p class="card-text text-muted">
+                                <small>
+                                    For: @review.RevieweeName<br />
+                                    Posted: @review.CreatedAt.ToString("g")
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a asp-action="Edit" asp-route-id="@review.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@review.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this review?');">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You have not written any reviews yet.
+        </div>
+    }
+
+    <a asp-action="Mine" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Reviews About Me
+    </a>
+</div>

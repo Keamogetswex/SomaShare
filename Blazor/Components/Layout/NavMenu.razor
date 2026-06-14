@@ -1,0 +1,106 @@
+﻿@inject NavigationManager Navigation
+@inject LocalizationService L
+@inject AuthenticationStateProvider AuthStateProvider
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            📚 @L["AppName"]
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        @L["Home"]
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/textbooks">
+                        @L["Browse"]
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/wanted-ads">
+                        @L["WantedAds"]
+                    </NavLink>
+                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/sell">
+                                @L["Sell"]
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/dashboard">
+                                @L["Dashboard"]
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+            </ul>
+
+            <ul class="navbar-nav">
+                <!-- Language dropdown to allow user to choose prefered language -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                         @(L.CurrentLanguage == "en" ? "English" : L.CurrentLanguage == "sw" ? "Kiswahili" : L.CurrentLanguage == "zu" ? "IsiZulu" : L.CurrentLanguage == "xh" ? "IsiXhosa" : "Setswana")
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" @onclick="@(() => SetLanguage("en"))">English</a></li>
+                        <li><a class="dropdown-item" @onclick="@(() => SetLanguage("sw"))">Kiswahili</a></li>
+                        <li><a class="dropdown-item" @onclick="@(() => SetLanguage("zu"))">IsiZulu</a></li>
+                        <li><a class="dropdown-item" @onclick="@(() => SetLanguage("xh"))">IsiXhosa</a></li>
+                        <li><a class="dropdown-item" @onclick="@(() => SetLanguage("tn"))">Setswana</a></li>
+                    </ul>
+                </li>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                👤 @context.User.Identity?.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><NavLink class="dropdown-item" href="/profile">Profile</NavLink></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="/Account/Logout">
+                                        <button type="submit" class="dropdown-item">@L["Logout"]</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </Authorized>
+                    <NotAuthorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/Account/Login">@L["Login"]</NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/Account/Register">@L["Register"]</NavLink>
+                        </li>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private void SetLanguage(string lang)
+    {
+        L.SetLanguage(lang);
+        StateHasChanged();
+    }
+}

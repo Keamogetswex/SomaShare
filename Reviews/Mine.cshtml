@@ -1,0 +1,56 @@
+@model List<SomaShareSS3.ViewModels.ReviewListItemViewModel>
+
+@{
+    ViewData["Title"] = "My Reviews";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Reviews About Me</h1>
+            <p class="text-muted">Reviews you have received from other users</p>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var review in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                @for (int i = 0; i < review.Rating; i++)
+                                {
+                                    <i class="fas fa-star text-warning"></i>
+                                }
+                                @for (int i = review.Rating; i < 5; i++)
+                                {
+                                    <i class="fas fa-star text-secondary"></i>
+                                }
+                            </div>
+                            <p class="card-text">@review.Comment</p>
+                            <p class="card-text text-muted">
+                                <small>
+                                    From: @review.ReviewerName<br />
+                                    Posted: @review.CreatedAt.ToString("g")
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You have not received any reviews yet.
+        </div>
+    }
+
+    <a asp-action="Given" class="btn btn-secondary">
+        <i class="fas fa-arrow-right"></i> Reviews I've Given
+    </a>
+</div>

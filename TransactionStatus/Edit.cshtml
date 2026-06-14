@@ -1,0 +1,51 @@
+@model SomaShareSS3.ViewModels.TransactionStatusViewModel
+
+@{
+    ViewData["Title"] = "Edit Transaction Status";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Edit Transaction Status</h1>
+            <hr />
+
+            @if (Model != null)
+            {
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">ID</label>
+                        <input type="text" class="form-control" value="@Model.Id" disabled />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="form-label">Status Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Status not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

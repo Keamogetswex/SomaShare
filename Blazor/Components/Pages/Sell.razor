@@ -1,0 +1,270 @@
+﻿@page "/sell"
+@page "/textbooks/edit/{Id:int}"
+@inject ITextbookService TextbookService
+@inject LocalizationService L
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Seller,Admin")]
+
+<PageTitle>@(_isEdit ? "Edit" : L["Sell"]) - @L["AppName"]</PageTitle>
+
+<h1>@(_isEdit ? "Edit Textbook" : " List a Textbook for Sale")</h1>
+<p class="text-muted">@(_isEdit ? "Update your listing details." : "Share your textbooks with fellow students.")</p>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @_errorMessage
+        <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="_model" OnValidSubmit="HandleSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" />
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Title *</label>
+                            <InputText class="form-control" @bind-Value="_model.Title" 
+                                       placeholder="e.g., Introduction to Algorithms" />
+                            <ValidationMessage For="@(() => _model.Title)" class="text-danger" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">@L["Condition"] *</label>
+                            <InputSelect class="form-select" @bind-Value="_model.Condition">
+                                @foreach (var condition in Enum.GetValues<TextbookCondition>())
+                                {
+                                    <option value="@condition">@condition</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Author *</label>
+                        <InputText class="form-control" @bind-Value="_model.Author" 
+                                   placeholder="e.g., Thomas H. Cormen" />
+                        <ValidationMessage For="@(() => _model.Author)" class="text-danger" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">ISBN</label>
+                            <InputText class="form-control" @bind-Value="_model.ISBN" 
+                                       placeholder="e.g., 9780262033848" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Course Code</label>
+                            <InputText class="form-control" @bind-Value="_model.CourseCode" 
+                                       placeholder="e.g., CSC201" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">@L["Price"] (Rand) *</label>
+                            <InputNumber class="form-control" @bind-Value="_model.Price" />
+                            <ValidationMessage For="@(() => _model.Price)" class="text-danger" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">@L["Campus"] *</label>
+                            <InputText class="form-control" @bind-Value="_model.Campus" 
+                                       placeholder="e.g., Main Campus" />
+                            <ValidationMessage For="@(() => _model.Campus)" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <InputTextArea class="form-control" @bind-Value="_model.Description" rows="4"
+                                      placeholder="Describe the condition, any markings, included materials, etc." />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Image URL</label>
+                        <InputText class="form-control" @bind-Value="_model.ImageUrl" 
+                                   placeholder="[example.com](https://example.com/image.jpg)" />
+                        <small class="text-muted">Paste a link to an image of your textbook</small>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">
+                            @if (_isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            @L["Save"]
+                        </button>
+                        <a href="@(_isEdit ? $"/textbooks/{Id}" : "/textbooks")" class="btn btn-outline-secondary">
+                            @L["Cancel"]
+                        </a>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tips for Selling</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">✓ Use a clear, descriptive title</li>
+                    <li class="mb-2">✓ Include the ISBN for easy searching</li>
+                    <li class="mb-2">✓ Be honest about the condition</li>
+                    <li class="mb-2">✓ Price competitively</li>
+                    <li class="mb-2">✓ Add a good quality photo</li>
+                    <li class="mb-2">✓ Mention the course it's used for</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    private TextbookModel _model = new();
+    private bool _isEdit => Id.HasValue;
+    private bool _isSubmitting;
+    private string? _errorMessage;
+    private string? _currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState != null)
+        {
+            var authState = await AuthState;
+            _currentUserId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        if (_isEdit && Id.HasValue)
+        {
+            var textbook = await TextbookService.GetTextbookByIdAsync(Id.Value);
+            if (textbook == null)
+            {
+                Navigation.NavigateTo("/textbooks");
+                return;
+            }
+
+            if (textbook.SellerId != _currentUserId)
+            {
+                Navigation.NavigateTo("/textbooks");
+                return;
+            }
+
+            _model = new TextbookModel
+            {
+                Title = textbook.Title,
+                Author = textbook.Author,
+                ISBN = textbook.ISBN,
+                CourseCode = textbook.CourseCode,
+                Description = textbook.Description,
+                Condition = textbook.Condition,
+                Price = textbook.Price,
+                Campus = textbook.Campus,
+                ImageUrl = textbook.ImageUrl
+            };
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrEmpty(_currentUserId)) return;
+
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        try
+        {
+            if (_isEdit && Id.HasValue)
+            {
+                var textbook = new Textbook
+                {
+                    Id = Id.Value,
+                    Title = _model.Title,
+                    Author = _model.Author,
+                    ISBN = _model.ISBN,
+                    CourseCode = _model.CourseCode,
+                    Description = _model.Description,
+                    Condition = _model.Condition,
+                    Price = _model.Price,
+                    Campus = _model.Campus,
+                    ImageUrl = _model.ImageUrl
+                };
+
+                await TextbookService.UpdateTextbookAsync(textbook);
+                Navigation.NavigateTo($"/textbooks/{Id}");
+            }
+            else
+            {
+                var textbook = new Textbook
+                {
+                    Title = _model.Title,
+                    Author = _model.Author,
+                    ISBN = _model.ISBN,
+                    CourseCode = _model.CourseCode,
+                    Description = _model.Description,
+                    Condition = _model.Condition,
+                    Price = _model.Price,
+                    Campus = _model.Campus,
+                    ImageUrl = _model.ImageUrl,
+                    SellerId = _currentUserId
+                };
+
+                var created = await TextbookService.CreateTextbookAsync(textbook);
+                Navigation.NavigateTo($"/textbooks/{created.Id}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private class TextbookModel
+    {
+        [Required(ErrorMessage = "Title is required")]
+        [MaxLength(300)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Author is required")]
+        [MaxLength(200)]
+        public string Author { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string? ISBN { get; set; }
+
+        [MaxLength(20)]
+        public string? CourseCode { get; set; }
+
+        [MaxLength(2000)]
+        public string? Description { get; set; }
+
+        public TextbookCondition Condition { get; set; } = TextbookCondition.Good;
+
+        [Required(ErrorMessage = "Price is required")]
+        [Range(1, 10000, ErrorMessage = "Price must be between R1 and R10000")]
+        public decimal Price { get; set; }
+
+        [Required(ErrorMessage = "Campus is required")]
+        [MaxLength(100)]
+        public string Campus { get; set; } = string.Empty;
+
+        public string? ImageUrl { get; set; }
+    }
+}

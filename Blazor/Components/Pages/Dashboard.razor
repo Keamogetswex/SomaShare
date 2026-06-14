@@ -1,0 +1,392 @@
+﻿@page "/dashboard"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using SomaShare.Infrastructure.Services
+@using SomaShare.Web.Services
+@using SomaShareSS3.Models
+@using SomaShareSS3.Services.Interfaces
+@inject ITextbookService TextbookService
+@inject<Component8 /><Component4 /><Component1 /><Component5 /><Component6 />
+<PageTitle>@<Component9 /> - @L["AppName"]</PageTitle>
+
+<h1>📊 @L["Dashboard"]</h1>
+
+@if (_isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Loading"]</span>
+        </div>
+    </div>
+}
+else
+{
+   
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">@L["MyListings"]</h5>
+                    <h2>@_myListings.Count()</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">@L["MyOffers"]</h5>
+                    <h2>@_myOffers.Count()</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">@L["MyTransactions"]</h5>
+                    <h2>@_myTransactions.Count()</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">@L["MyReviews"]</h5>
+                    <h2>@_myReviews.Count()</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link @(_activeTab == "listings" ? "active" : "")" 
+                    @onclick="() => _activeTab = \"listings\"">
+                📚 @L["MyListings"]
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_activeTab == "offers" ? "active" : "")" 
+                    @onclick="() => _activeTab = \"offers\"">
+                💬 @L["MyOffers"]
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_activeTab == "received" ? "active" : "")" 
+                    @onclick="() => _activeTab = \"received\"">
+                📥 Offers Received
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_activeTab == "transactions" ? "active" : "")" 
+                    @onclick="() => _activeTab = \"transactions\"">
+                💰 @L["MyTransactions"]
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_activeTab == "reviews" ? "active" : "")" 
+                    @onclick="() => _activeTab = \"reviews\"">
+                ⭐ @L["MyReviews"]
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        @if (_activeTab == "listings")
+        {
+            <div class="tab-pane active">
+                @if (!_myListings.Any())
+                {
+                    <div class="alert alert-info">
+                        You haven't listed any textbooks yet.
+                        <a href="/sell">List your first textbook</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Condition</th>
+                                    <th>Status</th>
+                                    <th>Offers</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var textbook in _myListings)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="/textbooks/@textbook.Id">@textbook.Title</a>
+                                            <br />
+                                            <small class="text-muted">@textbook.Author</small>
+                                        </td>
+                                        <td>R @textbook.Price.ToString("N2")</td>
+                                        <td>@textbook.Condition</td>
+                                        <td>
+                                            @if (textbook.IsAvailable)
+                                            {
+                                                <span class="badge bg-success">Available</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Sold</span>
+                                            }
+                                        </td>
+                                        <td>@textbook.Offers.Count</td>
+                                        <td>
+                                            <a href="/textbooks/edit/@textbook.Id" class="btn btn-sm btn-outline-primary">
+                                                @L["Edit"]
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+        else if (_activeTab == "offers")
+        {
+            <div class="tab-pane active">
+                @if (!_myOffers.Any())
+                {
+                    <div class="alert alert-info">
+                        You haven't made any offers yet.
+                        <a href="/textbooks">Browse textbooks</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Textbook</th>
+                                    <th>Seller</th>
+                                    <th>Your Offer</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var offer in _myOffers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="/textbooks/@offer.Textbook.Id">@offer.Textbook.Title</a>
+                                        </td>
+                                        <td>@offer.Textbook.Seller?.FirstName @offer.Textbook.Seller?.LastName</td>
+                                        <td>R @offer.OfferAmount.ToString("N2")</td>
+                                        <td>
+                                            <span class="badge @GetOfferStatusBadge(offer.Status)">@offer.Status</span>
+                                        </td>
+                                        <td>@offer.CreatedAt.ToString("dd MMM yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+        else if (_activeTab == "received")
+        {
+            <div class="tab-pane active">
+                @if (!_receivedOffers.Any())
+                {
+                    <div class="alert alert-info">No offers received yet.</div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Textbook</th>
+                                    <th>Buyer</th>
+                                    <th>Offer Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var offer in _receivedOffers)
+                                {
+                                    <tr>
+                                        <td><a href="/textbooks/@offer.Textbook.Id">@offer.Textbook.Title</a></td>
+                                        <td>
+                                            @offer.Buyer.FirstName @offer.Buyer.LastName
+                                            <br />
+                                            <small class="text-muted">⭐ @offer.Buyer.TrustScore.ToString("0.0")</small>
+                                        </td>
+                                        <td>R @offer.OfferAmount.ToString("N2")</td>
+                                        <td>
+                                            <span class="badge @GetOfferStatusBadge(offer.Status)">@offer.Status</span>
+                                        </td>
+                                        <td>@offer.CreatedAt.ToString("dd MMM yyyy")</td>
+                                        <td>
+                                            @if (offer.Status == OfferStatus.Pending)
+                                            {
+                                                <a href="/textbooks/@offer.Textbook.Id" class="btn btn-sm btn-primary">
+                                                    Respond
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+        else if (_activeTab == "transactions")
+        {
+            <div class="tab-pane active">
+                @if (!_myTransactions.Any())
+                {
+                    <div class="alert alert-info">No transactions yet.</div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Textbook</th>
+                                    <th>Role</th>
+                                    <th>Other Party</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var tx in _myTransactions)
+                                {
+                                    var isBuyer = tx.BuyerId == _currentUserId;
+                                    var otherParty = isBuyer ? tx.Seller : tx.Buyer;
+                                    <tr>
+                                        <td>@tx.Offer.Textbook.Title</td>
+                                        <td>
+                                            <span class="badge @(isBuyer ? "bg-info" : "bg-success")">
+                                                @(isBuyer ? "Buyer" : "Seller")
+                                            </span>
+                                        </td>
+                                        <td>@otherParty.FirstName @otherParty.LastName</td>
+                                        <td>R @tx.FinalPrice.ToString("N2")</td>
+                                        <td>
+                                            <span class="badge @GetTransactionStatusBadge(tx.Status)">@tx.Status</span>
+                                        </td>
+                                        <td>
+                                            <a href="/transactions/@tx.Id" class="btn btn-sm btn-outline-primary">
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+        else if (_activeTab == "reviews")
+        {
+            <div class="tab-pane active">
+                @if (!_myReviews.Any())
+                {
+                    <div class="alert alert-info">No reviews received yet.</div>
+                }
+                else
+                {
+                    <div class="row">
+                        @foreach (var review in _myReviews)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                From: @review.Reviewer.FirstName @review.Reviewer.LastName
+                                            </h6>
+                                            <span class="text-warning">
+                                                @for (int i = 0; i < review.Rating; i++)
+                                                {
+                                                    <text>⭐</text>
+                                                }
+                                            </span>
+                                        </div>
+                                        <p class="card-text">@(review.Comment ?? "No comment")</p>
+                                        <small class="text-muted">@review.CreatedAt.ToString("dd MMM yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    private string? _currentUserId;
+    private bool _isLoading = true;
+    private string _activeTab = "listings";
+
+    private IEnumerable<Textbook> _myListings = Enumerable.Empty<Textbook>();
+    private IEnumerable<Offer> _myOffers = Enumerable.Empty<Offer>();
+    private IEnumerable<Offer> _receivedOffers = Enumerable.Empty<Offer>();
+    private IEnumerable<Transaction> _myTransactions = Enumerable.Empty<Transaction>();
+    private IEnumerable<Review> _myReviews = Enumerable.Empty<Review>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState != null)
+        {
+            var authState = await AuthState;
+            _currentUserId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        if (!string.IsNullOrEmpty(_currentUserId))
+        {
+            _myListings = await TextbookService.GetTextbooksBySellerAsync(_currentUserId);
+            _myOffers = await OfferService.GetOffersByBuyerAsync(_currentUserId);
+            _receivedOffers = await OfferService.GetOffersReceivedBySellerAsync(_currentUserId);
+            _myTransactions = await TransactionService.GetTransactionsByUserAsync(_currentUserId);
+            _myReviews = await ReviewService.GetReviewsByUserAsync(_currentUserId);
+        }
+
+        _isLoading = false;
+    }
+
+    private string GetOfferStatusBadge(OfferStatus status) => status switch
+    {
+        OfferStatus.Pending => "bg-warning text-dark",
+        OfferStatus.Accepted => "bg-success",
+        OfferStatus.Rejected => "bg-danger",
+        OfferStatus.Withdrawn => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    private string GetTransactionStatusBadge(TransactionStatus status) => status switch
+    {
+        TransactionStatus.Pending => "bg-warning text-dark",
+        TransactionStatus.InProgress => "bg-info",
+        TransactionStatus.Completed => "bg-success",
+        TransactionStatus.Cancelled => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
