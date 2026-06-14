@@ -1,0 +1,68 @@
+﻿@inject LocalizationService L
+
+<div class="card h-100 shadow-sm">
+    @if (!string.IsNullOrEmpty(Textbook.ImageUrl))
+    {
+        <img src="@Textbook.ImageUrl" class="card-img-top" alt="@Textbook.Title"
+             style="height: 200px; object-fit: cover;">
+    }
+    else
+    {
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+             style="height: 200px;">
+            <span class="display-4 text-muted">📚</span>
+        </div>
+    }
+
+    <div class="card-body">
+        <h5 class="card-title text-truncate" title="@Textbook.Title">@Textbook.Title</h5>
+        <p class="card-text text-muted mb-1">by @Textbook.Author</p>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="h5 text-primary mb-0">R @Textbook.Price.ToString("N2")</span>
+            <span class="badge @GetConditionBadgeClass()">@Textbook.Condition</span>
+        </div>
+
+        <div class="small text-muted mb-2">
+            <i class="bi bi-geo-alt"></i> @Textbook.Campus
+            @if (!string.IsNullOrEmpty(Textbook.CourseCode))
+            {
+                <span class="ms-2">📖 @Textbook.CourseCode</span>
+            }
+        </div>
+
+        @if (Textbook.Seller != null)
+        {
+            <div class="small text-muted">
+                <span title="Seller Trust Score">
+                    ⭐ @Textbook.Seller.TrustScore.ToString("0.0")
+                </span>
+                <span class="ms-2">
+                    ✓ @Textbook.Seller.CompletedTransactions transactions
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="card-footer bg-transparent">
+        <a href="/textbooks/@Textbook.Id" class="btn btn-primary w-100">View Details</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Textbook Textbook { get; set; } = default!;
+
+    private string GetConditionBadgeClass()
+    {
+        return Textbook.Condition switch
+        {
+            TextbookCondition.New => "bg-success",
+            TextbookCondition.LikeNew => "bg-info",
+            TextbookCondition.Good => "bg-primary",
+            TextbookCondition.Fair => "bg-warning text-dark",
+            TextbookCondition.Poor => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+}

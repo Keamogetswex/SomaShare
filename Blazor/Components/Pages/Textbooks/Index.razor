@@ -1,0 +1,199 @@
+﻿@page "/textbooks"
+@inject ITextbookService TextbookService
+@inject LocalizationService L
+
+<PageTitle>@L["Browse"] - @L["AppName"]</PageTitle>
+
+<h1 class="mb-4">📚 @L["Browse"]</h1>
+
+<!-- Search and Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">@L["Search"]</label>
+                <input type="text" class="form-control" placeholder="Title, author, ISBN, course code..."
+                       @bind="_searchTerm" @bind:event="oninput" @onkeyup="HandleSearchKeyUp" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Min @L["Price"]</label>
+                <input type="number" class="form-control" @bind="_minPrice" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Max @L["Price"]</label>
+                <input type="number" class="form-control" @bind="_maxPrice" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@L["Condition"]</label>
+                <select class="form-select" @bind="_selectedCondition">
+                    <option value="">All</option>
+                    @foreach (var condition in Enum.GetValues<TextbookCondition>())
+                    {
+                        <option value="@condition">@condition</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@L["Campus"]</label>
+                <input type="text" class="form-control" @bind="_campus" placeholder="Campus name" />
+            </div>
+        </div>
+        
+        <div class="row g-3 mt-2">
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select class="form-select" @bind="_sortBy">
+                    <option value="date">Date Listed</option>
+                    <option value="price">Price</option>
+                    <option value="title">Title</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Order</label>
+                <select class="form-select" @bind="_sortDescending">
+                    <option value="false">Ascending</option>
+                    <option value="true">Descending</option>
+                </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <button class="btn btn-primary me-2" @onclick="SearchTextbooks">
+                    🔍 @L["Search"]
+                </button>
+                <button class="btn btn-outline-secondary" @onclick="ClearFilters">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results -->
+@if (_isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Loading"]</span>
+        </div>
+    </div>
+}
+else if (_textbooks == null || !_textbooks.Any())
+{
+    <div class="alert alert-info">
+        <h5>No textbooks found</h5>
+        <p>Try adjusting your search filters or check back later.</p>
+    </div>
+}
+else
+{
+    <p class="text-muted mb-3">Showing @_textbooks.Count() of @_totalCount results</p>
+    
+    <div class="row">
+        @foreach (var textbook in _textbooks)
+        {
+            <div class="col-md-4 mb-4">
+                <TextbookCard Textbook="textbook" />
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (_totalPages > 1)
+    {
+        <nav aria-label="Search results pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => GoToPage(_currentPage - 1)">Previous</button>
+                </li>
+                @for (int i = 1; i <= _totalPages; i++)
+                {
+                    var pageNum = i;
+                    <li class="page-item @(_currentPage == pageNum ? "active" : "")">
+                        <button class="page-link" @onclick="() => GoToPage(pageNum)">@pageNum</button>
+                    </li>
+                }
+                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => GoToPage(_currentPage + 1)">Next</button>
+                </li>
+            </ul>
+        </nav>
+    }
+}
+
+@code {
+    private IEnumerable<Textbook>? _textbooks;
+    private bool _isLoading = true;
+    private int _totalCount;
+    private int _currentPage = 1;
+    private int _pageSize = 12;
+    private int _totalPages => (int)Math.Ceiling((double)_totalCount / _pageSize);
+
+    // Filter state
+    private string? _searchTerm;
+    private decimal? _minPrice;
+    private decimal? _maxPrice;
+    private TextbookCondition? _selectedCondition;
+    private string? _campus;
+    private string _sortBy = "date";
+    private bool _sortDescending = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchTextbooks();
+    }
+
+    private async Task SearchTextbooks()
+    {
+        _isLoading = true;
+        StateHasChanged();
+
+        TextbookCondition? condition = null;
+        if (!string.IsNullOrEmpty(_selectedCondition?.ToString()))
+        {
+            condition = _selectedCondition;
+        }
+
+        var result = await TextbookService.SearchTextbooksAsync(
+            searchTerm: _searchTerm,
+            minPrice: _minPrice,
+            maxPrice: _maxPrice,
+            condition: condition,
+            campus: _campus,
+            sortBy: _sortBy,
+            sortDescending: _sortDescending,
+            page: _currentPage,
+            pageSize: _pageSize);
+
+        _textbooks = result.Items;
+        _totalCount = result.TotalCount;
+        _isLoading = false;
+    }
+
+    private async Task HandleSearchKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _currentPage = 1;
+            await SearchTextbooks();
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages) return;
+        _currentPage = page;
+        await SearchTextbooks();
+    }
+
+    private async Task ClearFilters()
+    {
+        _searchTerm = null;
+        _minPrice = null;
+        _maxPrice = null;
+        _selectedCondition = null;
+        _campus = null;
+        _sortBy = "date";
+        _sortDescending = true;
+        _currentPage = 1;
+        await SearchTextbooks();
+    }
+}

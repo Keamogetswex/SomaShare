@@ -1,0 +1,103 @@
+﻿@page "/"
+@inject LocalizationService L
+@inject ITextbookService TextbookService
+
+<PageTitle>@L["AppName"] - Home</PageTitle>
+
+<div class="hero-section bg-primary text-white p-5 rounded mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold">📚 @L["AppName"]</h1>
+            <p class="lead">@L["Tagline"]</p>
+            <p class="mb-4">
+                Connect with fellow students to buy, sell, and exchange textbooks. 
+                Save money while building a trusted campus community.
+            </p>
+            <div class="d-flex gap-3">
+                <a href="/textbooks" class="btn btn-light btn-lg">Browse Textbooks</a>
+                <AuthorizeView>
+                    <Authorized>
+                        <a href="/sell" class="btn btn-outline-light btn-lg">Sell Your Books</a>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/Account/Register" class="btn btn-outline-light btn-lg">Join Now</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+        <div class="col-md-4 text-center d-none d-md-block">
+            <div class="display-1">📖</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 mb-3">💰</div>
+                <h5 class="card-title">Save Money</h5>
+                <p class="card-text">Buy used textbooks at affordable prices from fellow students.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 mb-3">🤝</div>
+                <h5 class="card-title">Build Trust</h5>
+                <p class="card-text">Community trust scores and reviews ensure safe transactions.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 mb-3">🎓</div>
+                <h5 class="card-title">Campus Community</h5>
+                <p class="card-text">Meet up on campus with verified university students.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-3">Recently Listed Textbooks</h2>
+
+@if (_recentTextbooks == null)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Loading"]</span>
+        </div>
+    </div>
+}
+else if (!_recentTextbooks.Any())
+{
+    <div class="alert alert-info">
+        No textbooks listed yet. Be the first to <a href="/sell">list a textbook</a>!
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var textbook in _recentTextbooks.Take(6))
+        {
+            <div class="col-md-4 mb-4">
+                <TextbookCard Textbook="textbook" />
+            </div>
+        }
+    </div>
+    
+    <div class="text-center mt-3">
+        <a href="/textbooks" class="btn btn-outline-primary">View All Textbooks</a>
+    </div>
+}
+
+@code {
+    private IEnumerable<Textbook>? _recentTextbooks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _recentTextbooks = await TextbookService.GetAllTextbooksAsync();
+    }
+}
