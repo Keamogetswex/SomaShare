@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SomaShareSS3.Models;
-using SomaShareSS3.Models.Enums;
+using SomaShareWebApp.Models;
+using SomaShareWebApp.Models.Enums;
 
-namespace SomaShare.Infrastructure.Data;
+namespace SomaShareWebApp.Data;
 
 public static class DbInitializer
 {

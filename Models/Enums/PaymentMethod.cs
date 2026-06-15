@@ -1,4 +1,4 @@
-namespace SomaShareSS3.Models.Enums;
+namespace SomaShareWebApp.Models.Enums;
 
 public enum PaymentMethod
 {

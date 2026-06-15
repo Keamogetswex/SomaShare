@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SomaShareSS3.ViewModels;
+using SomaShareWebApp.ViewModels;
 
-namespace SomaShareSS3.Controllers
+namespace SomaShareWebApp.Controllers
 {
     public class ReviewsController : Controller
     {
