@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SomaShareSS3.Models;
-using SomaShareSS3.ViewModels;
+using SomaShareWebApp.Models;
+using SomaShareWebApp.ViewModels;
 
-namespace SomaShareSS3.Controllers
+namespace SomaShareWebApp.Controllers
 {
     public class WantedAdsController : Controller
     {

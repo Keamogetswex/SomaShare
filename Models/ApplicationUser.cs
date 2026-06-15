@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace SomaShareSS3.Models;
+namespace SomaShareWebApp.Models;
 
 public class ApplicationUser : IdentityUser
 {

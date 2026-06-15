@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SomaShareSS3.Models.Enums;
-using SomaShareSS3.ViewModels;
+using SomaShareWebApp.Models.Enums;
+using SomaShareWebApp.ViewModels;
 
-namespace SomaShareSS3.Controllers
+namespace SomaShareWebApp.Controllers
 {
     public class PaymentMethodController : Controller
     {

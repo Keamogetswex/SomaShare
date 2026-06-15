@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SomaShareSS3.Models;
+using SomaShareWebApp.Models;
 
-namespace SomaShare.Infrastructure.Data;
+namespace SomaShareWebApp.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

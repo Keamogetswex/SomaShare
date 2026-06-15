@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using SomaShareSS3.Models;
+using SomaShareWebApp.Models;
 
-namespace SomaShareSS3.Controllers
+namespace SomaShareWebApp.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
-using SomaShareSS3.Models.Enums;
+using SomaShareWebApp.Models.Enums;
 
-namespace SomaShareSS3.Models;
+namespace SomaShareWebApp.Models;
 
 public class WantedAd
 {

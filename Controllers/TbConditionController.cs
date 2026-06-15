@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SomaShareSS3.Models.Enums;
-using SomaShareSS3.ViewModels;
+using SomaShareWebApp.Models.Enums;
+using SomaShareWebApp.ViewModels;
 
-namespace SomaShareSS3.Controllers
+namespace SomaShareWebApp.Controllers
 {
     public class TbConditionController : Controller
     {
@@ -17,13 +17,13 @@ namespace SomaShareSS3.Controllers
         {
             var conditions = Enum.GetValues(typeof(TextbookCondition))
                 .Cast<TextbookCondition>()
-                .Select(c => new TextbookConditionViewModel { Id = (int)c, Name = c.ToString() })
+                .Select(static c => new TextbookConditionViewModel((int)c, default) { Name = c.ToString() })
                 .ToList();
 
             return View(conditions);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, string? description)
         {
             if (!Enum.IsDefined(typeof(TextbookCondition), id))
             {
@@ -31,7 +31,7 @@ namespace SomaShareSS3.Controllers
             }
 
             var condition = (TextbookCondition)id;
-            var model = new TextbookConditionViewModel { Id = id, Name = condition.ToString() };
+            var model = new TextbookConditionViewModel(id, Description: description) { Name = condition.ToString() };
 
             return View(model);
         }
@@ -62,7 +62,7 @@ namespace SomaShareSS3.Controllers
             }
 
             var condition = (TextbookCondition)id;
-            var model = new TextbookConditionViewModel { Id = id, Name = condition.ToString() };
+            var model = new TextbookConditionViewModel(id, default) { Name = condition.ToString() };
 
             return View(model);
         }
