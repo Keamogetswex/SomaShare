@@ -1,0 +1,114 @@
+@model SomaShareWebApp.ViewModels.TextbookDetailsViewModel
+
+@{
+    ViewData["Title"] = "Textbook Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model?.Title" style="max-height: 400px; object-fit: cover;">
+            }
+            else
+            {
+                <div class="bg-secondary rounded" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-book text-white" style="font-size: 5rem;"></i>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            @if (Model != null)
+            {
+                <h1>@Model.Title</h1>
+                <p class="text-muted">by @Model.Author</p>
+                <hr />
+
+                <div class="mb-3">
+                    <h5>Price: <strong class="text-success">@Model.Price.ToString("C")</strong></h5>
+                </div>
+
+                <div class="mb-3">
+                    <p>
+                        <strong>Condition:</strong>
+                        <span class="badge bg-info">@Model.Condition</span>
+                    </p>
+                    <p>
+                        <strong>Status:</strong>
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Unavailable</span>
+                        }
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    @if (!string.IsNullOrEmpty(Model.ISBN))
+                    {
+                        <p><strong>ISBN:</strong> @Model.ISBN</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CourseCode))
+                    {
+                        <p><strong>Course Code:</strong> @Model.CourseCode</p>
+                    }
+                    <p><strong>Campus:</strong> @Model.Campus</p>
+                    <p><strong>Listed:</strong> @Model.CreatedAt.ToString("g")</p>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Seller Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <strong>Name:</strong> @Model.SellerName
+                        </p>
+                        <p>
+                            <strong>Trust Score:</strong>
+                            <span class="badge bg-warning">@Model.SellerTrustScore / 5.0</span>
+                        </p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Seller Profile</a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mb-3">
+                        <h6>Description</h6>
+                        <p>@Model.Description</p>
+                    </div>
+                }
+
+                @if (Model.IsAvailable)
+                {
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-primary btn-lg">
+                            <i class="fas fa-shopping-cart"></i> Make an Offer
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        This textbook is currently unavailable.
+                    </div>
+                }
+
+                <a asp-action="Index" class="btn btn-secondary mt-3">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Textbook not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>

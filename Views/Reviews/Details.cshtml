@@ -1,0 +1,52 @@
+@model SomaShareWebApp.ViewModels.ReviewEditViewModel
+
+@{
+    ViewData["Title"] = "Review Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model != null)
+            {
+                <h1>Review Details</h1>
+                <hr />
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Rating:</h6>
+                            @for (int i = 0; i < Model.Rating; i++)
+                            {
+                                <i class="fas fa-star text-warning"></i>
+                            }
+                            @for (int i = Model.Rating; i < 5; i++)
+                            {
+                                <i class="fas fa-star text-secondary"></i>
+                            }
+                        </div>
+                        <p class="card-text">
+                            <strong>Comment:</strong><br />
+                            @Model.Comment
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Given" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Review not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>

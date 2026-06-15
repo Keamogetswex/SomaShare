@@ -1,0 +1,84 @@
+@model SomaShareWebApp.ViewModels.TransactionEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Transaction";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>Edit Transaction</h1>
+            <hr />
+
+            @if (Model != null)
+            {
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="OfferId" />
+                    <input type="hidden" asp-for="BuyerId" />
+                    <input type="hidden" asp-for="SellerId" />
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Amount" class="form-label">Amount *</label>
+                        <input asp-for="Amount" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="PaymentMethod" class="form-label">Payment Method *</label>
+                        <select asp-for="PaymentMethod" class="form-select">
+                            <option value="0">Cash on Meetup</option>
+                            <option value="1">Mobile Money</option>
+                            <option value="2">Bank Transfer</option>
+                        </select>
+                        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MeetupLocation" class="form-label">Meetup Location</label>
+                        <input asp-for="MeetupLocation" class="form-control" />
+                        <span asp-validation-for="MeetupLocation" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MeetupDateTime" class="form-label">Meetup Date/Time</label>
+                        <input asp-for="MeetupDateTime" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="MeetupDateTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Status" class="form-label">Status *</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="0">Pending</option>
+                            <option value="1">In Progress</option>
+                            <option value="2">Completed</option>
+                            <option value="3">Cancelled</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Transaction not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

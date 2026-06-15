@@ -1,7 +1,14 @@
-namespace SomaShareSS3.ViewModels;
+using System.Diagnostics;
 
-public class TextbookConditionViewModel
+namespace SomaShareWebApp.ViewModels;
+
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+public record TextbookConditionViewModel(int Id, string Description) : ITextbookConditionViewModel
 {
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+
+    private string GetDebuggerDisplay()
+    {
+        return ToString();
+    }
 }

@@ -1,0 +1,58 @@
+@model SomaShareWebApp.ViewModels.WantedAdEditViewModel
+
+@{
+    ViewData["Title"] = "Wanted Ad Details";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (Model != null)
+            {
+                <h1>@Model.Title</h1>
+                <hr />
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text">@Model.Description</p>
+                        <p class="card-text">
+                            <strong>Max Price:</strong> <span class="text-success">@Model.MaxPrice.ToString("C")</span>
+                        </p>
+                        @if (!string.IsNullOrEmpty(Model.PreferredCondition))
+                        {
+                            <p class="card-text">
+                                <strong>Preferred Condition:</strong> @Model.PreferredCondition
+                            </p>
+                        }
+                        <p class="card-text">
+                            <strong>Status:</strong>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Wanted ad not found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
