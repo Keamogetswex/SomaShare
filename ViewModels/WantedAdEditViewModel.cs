@@ -1,4 +1,4 @@
-namespace SomaShareSS3.ViewModels;
+namespace SomaShareWebApp.ViewModels;
 
 public class WantedAdEditViewModel
 {

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZT4GZyMbSP0=",
+  "dgSpecHash": "i1XPvj2kyrI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USER\\OneDrive - STADIO\\WEB-B262\\ss3\\SomaShareSS3\\SomaShareSS3\\SomaShareSS3.csproj",
+  "projectFilePath": "C:\\Users\\USER\\OneDrive - STADIO\\WEB-B262\\ss3\\SomaShareWebApp\\SomaShareWebApp\\SomaShareWebApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USER\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

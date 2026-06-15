@@ -1,6 +1,6 @@
-using SomaShareSS3.Models.Enums;
+using SomaShareWebApp.Models.Enums;
 
-namespace SomaShareSS3.ViewModels;
+namespace SomaShareWebApp.ViewModels;
 
 public class TextbookEditViewModel
 {
