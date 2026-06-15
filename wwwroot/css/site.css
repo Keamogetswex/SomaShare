@@ -30,10 +30,10 @@ main {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
- .card:hover {
-     transform: translateY(-2px);
-     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
- }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
 
 .trust-score {
@@ -80,8 +80,8 @@ main {
         text-align: center;
     }
 
-.hero-section .d-flex {
-    justify-content: center;
+        .hero-section .d-flex {
+            justify-content: center;
         }
 }
 
